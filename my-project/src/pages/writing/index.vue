@@ -117,7 +117,7 @@ export default {
         },
         // 键盘聚焦
         jujiao (e) {
-            this.bot = e.target.height || 0
+            this.bot = e.target.height + 50 || 0
             this.achieve = true
         },
         // 键盘失焦

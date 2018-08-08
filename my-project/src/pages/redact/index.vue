@@ -454,13 +454,15 @@ export default {
             console.log('图片',Val)
             this.bgimg = Val
             this.essayarr['bgimage'] = this.bgimg
-            wx.setStorageSync('article', this.essayarr); 
+            wx.setStorageSync('article', this.essayarr)
         },
         textarr (Val) {
             console.log('文字',Val)
-            this.article[Val.id].content = Val.val
-            this.essayarr['details'] = this.article
-            wx.setStorageSync('article', this.essayarr); 
+            if (Val) {
+                this.article[Val.id].content = Val.val
+                this.essayarr['details'] = this.article
+                wx.setStorageSync('article', this.essayarr)
+            }
         }
     },
     computed: {
@@ -715,7 +717,6 @@ export default {
                                 files: this.bgimg
                             },
                             success: (res) => {
-                                console.log('2',res)
                                 var data = JSON.parse(res.data)
                                 if (!data.success) {
                                     return wx.showToast({
@@ -747,7 +748,6 @@ export default {
                         items: musicarr
                     })
                     .then( res => {
-                        console.log('3',res)
                         if (res.success) {
                             wx.showToast({
                                 title: res.data.msg,
@@ -755,6 +755,7 @@ export default {
                                 duration: 2000
                             })
                             setTimeout(function(){
+                                console.log('报错？',_this.id)
                                 const url = '../indexitem/main?id=' + _this.id
                                 wx.navigateBack({ url })
                             },3000)
@@ -778,7 +779,6 @@ export default {
                     console.log(res)
                 })
             }else {
-                console.log('到这里了？')
                 this.allUploads(musicarr, new Promise( (resolve, reject) => {
                     wx.uploadFile({
                         url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
@@ -820,15 +820,8 @@ export default {
                     .then( res => {
                         console.log(res)
                         if (res.success) {
-                            wx.showToast({
-                                title: res.data.msg,
-                                icon: 'none',
-                                duration: 2000
-                            })
-                            setTimeout(function(){
-                                const url = '../index/main'
-                                wx.switchTab({ url })
-                            },3000)
+                            const url = '../index/main'
+                            wx.switchTab({ url })
                             this.setTextarea ('')
                             this.setMusicarr (null)
                             this.setImgarea (null)

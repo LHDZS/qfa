@@ -511,9 +511,7 @@ export default {
         this.opid = wx.getStorageSync('openid')
         this.tabkey = 0
         this.$refs.loading.show()
-        wx.setStorageSync('pShow','')
         this.items = []
-        // this.items = []
         this.recommend()
         // 关注
         this.attentions = []
@@ -523,17 +521,6 @@ export default {
         this.currentPage = 1
         // 身边
         this.nearbyarr = []
-        // console.log(this.$mp.query.id)
-        // this.tabkey = this.$mp.query.id || 0
-        // 判断是那页 优化请求数量
-        // if (this.tabkey == 0) {
-        // }else if (this.tabkey == 1) {
-        //     this.attention()
-        //     this.followed()
-        //     this.careabout()
-        // }else if (this.tabkey == 2) {
-        //     this.nearbyapi()
-        // }
         this.http = this.url
     },
     watch: {
@@ -564,7 +551,12 @@ export default {
         }
     },
     onShow() {
-        
+        if (this.tabkey == 0) {
+            this.currentPage = 1
+            this.items = []
+            this.recommend()
+        }
+        wx.setStorageSync('pShow','')
     },
     computed: {
         abnorType(){

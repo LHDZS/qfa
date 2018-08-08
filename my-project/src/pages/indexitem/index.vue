@@ -9,7 +9,6 @@
         <web-view :src="url + '?id=' + id + '&openid' + opid" @message="WeChat"></web-view>
     </div>
 </template>
-
 <!-- <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script> -->
 <script>
 export default {
