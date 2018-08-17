@@ -60,19 +60,28 @@
     font-size: 40rpx;
     border-radius: 10rpx;
 }
+.reward_input {
+    width: 180rpx;
+    margin: 0 auto;
+    border: 1rpx solid #eee;
+    font-size: 28rpx;
+    padding-left: 20rpx;
+    box-sizing: border-box;
+}
 </style>
 
 <template>
     <div class="reward">
         <div class="reward_items">
-            <div :class="kid == key ? 'reward_item_ff' : 'reward_item'" v-for="(item,key) in moneys" :key="key" @click="cut(key)">
+            <div :class="kid == key ? 'reward_item_ff' : 'reward_item'" v-for="(item,key) in moneys" :key="key" @click="cut(key,item)">
                 ￥{{item}}元
                 <img v-if="kid == key" class="reward_item_img" src="/static/img/jexz.png" alt="">
             </div>
             <div class="clearfix"></div>
         </div>
         <div class="reward_money">自定义金额</div>
-        <div class="reward_give">打赏</div>
+        <input class="reward_input" type="text" placeholder="请输入金额" confirm-type="done" @confirm="inpu" maxlength="5">
+        <div class="reward_give" @click="reward">打赏</div>
     </div>
 </template>
 
@@ -83,7 +92,10 @@ export default {
             moneys:[
                 '2','5','10','15','20','25','30','35','40'
             ],
-            kid : null
+            kid : null,
+            oppid: null,
+            // 价格
+            item: null
         }
     },
     components: {
@@ -93,38 +105,47 @@ export default {
         // wx.setNavigationBarTitle({
         //     title: '打赏收益详情'
         // })
+        this.oppid = this.$mp.query.oppid
+        this.id = this.$mp.query.id
     },
     computed: {
 
     },
     methods:{
+        inpu(e) {
+            this.item = e.target.value
+        },
         // 切换
-        cut (id) {
+        cut (id,item) {
             this.kid = id
+            this.item = item
         },
         // 积分列表
-        Integrallist () {
+        reward () {
             var _this = this
             var opid = wx.getStorageSync('openid')
-            this.$get('/restapi/article-reward',{
-                openid: opid,
-                page: _this.currentPage,
-                'per-page': _this.perPage
+            this.$post('/restapi/article-reward/create',{
+                reward_openid: opid,
+                openid: _this.oppid,
+                reward_amount : 0.01,
+                aid: _this.id
             })
             .then(function (res) {
                 if(res.success) {
-                    _this.loadingStatus = true
-                    _this.$refs.loading.hide()
-                    if(res.data.items.length == 0){
-                        _this.requestStatus = 404
-                        return
-                    }else {
-                        _this.requestStatus = ''
+                    console.log(res)
+                    wx.requestPayment({
+                        'timeStamp': res.data.timeStamp,
+                        'nonceStr': res.data.nonceStr,
+                        'package': res.data.package,
+                        'signType': res.data.signType,
+                        'paySign': res.data.paySign,
+                    success:function(res){
+                        console.log(res)
+                    },
+                    fail:function(res){
+                        console.log(res)
                     }
-                    _this.maxPage = res.data._meta.pageCount
-                    for (var i=0;i<res.data.items.length;i++) {
-                        _this.ilarr.push(res.data.items[i])
-                    }
+                    })
                 }else {
                     wx.showToast({
                         title: res.data.message,

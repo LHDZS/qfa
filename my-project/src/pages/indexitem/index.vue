@@ -6,7 +6,7 @@
 
 <template>
     <div class="indexitem">
-        <web-view :src="url + '?id=' + id + '&openid' + opid" @message="WeChat"></web-view>
+        <web-view :src="url + '?id=' + id + '&&openid=' + opid" @message="WeChat"></web-view>
     </div>
 </template>
 <!-- <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script> -->
@@ -24,8 +24,8 @@ export default {
 
     },
     mounted() {
-        this.id = this.$mp.query.id || '19'
-        this.opid = wx.getStorageSync('openid')
+        this.id = this.$mp.query.id
+        this.opid = this.$mp.query.opid
         console.log(this.id)
         console.log(this.opid)
     },

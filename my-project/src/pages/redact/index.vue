@@ -625,7 +625,6 @@ export default {
                     })
                 }))
             }
-            console.log(allRequest)
             return Promise.all(allRequest)
         },
         // 编辑
@@ -649,7 +648,6 @@ export default {
                                 files: arr[i].views
                             },
                             success: function (res) {
-                                console.log('1111',res)
                                 var data = JSON.parse(res.data)
                                 if (!data.success) {
                                     return wx.showToast({

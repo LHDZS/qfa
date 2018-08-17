@@ -164,7 +164,7 @@ export default {
             }
             
         },
-        // 积分兑换
+        // 金额提现
         convertibility () {
             if (!this.strbol) {
                 return 

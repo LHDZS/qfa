@@ -20,7 +20,7 @@
 }
 .music_header_onitem {
     flex: 1;
-    background-color: #58ad68;
+    background-color: #6ba5f7;
     color: #fff;
 }
 .music_main {
@@ -154,12 +154,14 @@
         <div class="music_main" v-if="muid == 0">
             <div class="music_main_item" @click="wubeijing"> 无背景音乐</div>
             <div class="zhanweifu"></div>
-            <div class="music_main_items" v-for="(item,key) in musicarr" :key="key">
-                <div class="music_main_item" @click="songchoice(item.type,key)">{{item.name}}</div>
-                <div class="music_main_lists" v-if="key == Songid && Songshow">
-                    <div class="music_main_list" v-for="(list,index) in lists" :key="index" @click="dianji(list.song_id)">
-                        {{list.title}}
-                        <img v-if="imgid == list.song_id" class="music_main_list_img" src="/static/img/yes.png" alt="">
+            <div class="music_main_items">
+                <!-- <div class="music_main_item" @click="songchoice(item.type,key)">{{item.name}}</div> -->
+                <div class="music_main_item" @click="songchoice(0,0)">外语歌</div>
+                <div class="music_main_item" @click="songchoice(1,1)">国语歌</div>
+                <div class="music_main_lists">
+                    <div class="music_main_list" v-for="(list,index) in lists" :key="index" @click="dianji(list.music_url,list.name,index)">
+                        {{list.name}}
+                        <img v-if="imgid == index" class="music_main_list_img" src="/static/img/yes.png" alt="">
                     </div>
                 </div>
                 <div class="zhanweifu"></div>
@@ -199,7 +201,7 @@ export default {
             // 搜索用的列表
             songlists:[],
             tabarr:[
-                '选择音乐','搜索音乐'
+                '选择音乐'
             ],
             // 音乐列表
             lists:[],
@@ -225,8 +227,8 @@ export default {
         wkLoading
     },
     mounted() {
-        this.$refs.loading.show()
-        this.musicapi()
+        // this.$refs.loading.show()
+        // this.musicapi()
     },
     computed: {
         ...mapState([
@@ -258,13 +260,35 @@ export default {
             this.songsearch (e.target.value)
         },
         // 音乐选择
-        dianji (id) {
-            if (this.judid == id) {
-                return
-            }else{
-                this.judid = id
-                this.musicplay(id)   
+        dianji (url,name,i) {
+            // if (this.judid == id) {
+            //     return
+            // }else{
+            //     this.judid = id
+            //     this.musicplay(id)   
+            // }
+            this.imgid = i
+            var _this = this
+            _this.songsrc = 'http://back.wenzhang.xiaoniren.cn' + url
+            _this.songtitle = name
+            if (_this.innerAudioContext) {
+                _this.innerAudioContext.destroy()
             }
+            _this.innerAudioContext = wx.createInnerAudioContext()
+            _this.innerAudioContext.autoplay = true
+            _this.innerAudioContext.src = 'http://back.wenzhang.xiaoniren.cn' + url
+            _this.innerAudioContext.onPlay(() => {
+                console.log('开始播放')
+            })
+            _this.innerAudioContext.onError((res) => {
+                console.log(res.errMsg)
+                console.log(res.errCode)
+            })
+            _this.innerAudioContext.onEnded((res) => {
+                _this.judid = null
+                console.log('播放完了')
+            })
+            console.log(this.url + url)
         },
         wubeijing () {
             this.songsrc = ''
@@ -296,38 +320,62 @@ export default {
             }
         },
         // 音乐列表
-        musicapi () {
-            var _this = this
-            var opid = wx.getStorageSync('openid')
-            this.$get('/restapi/music')
-            .then(function (res) {
-                if(res.success) {
-                    _this.$refs.loading.hide()
-                    _this.musicarr = res.data.items
-                }else {
-                    wx.showToast({
-                        title: '失败',
-                        icon: 'success',
-                        duration: 1000
-                    })
-                }
-            })
-            .catch(function (res) {
-                console.log(res)
-            })
-        },
+        // musicapi () {
+        //     var _this = this
+        //     var opid = wx.getStorageSync('openid')
+        //     this.$get('/restapi/music')
+        //     .then(function (res) {
+        //         if(res.success) {
+        //             _this.$refs.loading.hide()
+        //             _this.musicarr = res.data.items
+        //         }else {
+        //             wx.showToast({
+        //                 title: '失败',
+        //                 icon: 'success',
+        //                 duration: 1000
+        //             })
+        //         }
+        //     })
+        //     .catch(function (res) {
+        //         console.log(res)
+        //     })
+        // },
+        // 列表请求
+        // songlist (type) {
+        //     var _this = this
+        //     var opid = wx.getStorageSync('openid')
+        //     this.$get('/restapi/music/songlist',{
+        //         type:type,
+        //         filter: 'title,song_id'
+        //     })
+        //     .then(function (res) {
+        //         _this.$refs.loading.hide()
+        //         if(res.success) {
+        //             _this.lists = res.data.song_list
+        //         }else {
+        //             wx.showToast({
+        //                 title: '失败',
+        //                 icon: 'success',
+        //                 duration: 1000
+        //             })
+        //         }
+        //     })
+        //     .catch(function (res) {
+        //         console.log(res)
+        //     })
+        // },
         // 列表请求
         songlist (type) {
             var _this = this
             var opid = wx.getStorageSync('openid')
-            this.$get('/restapi/music/songlist',{
-                type:type,
-                filter: 'title,song_id'
+            this.$get('/restapi/article-music',{
+                type:type
             })
             .then(function (res) {
                 _this.$refs.loading.hide()
+                console.log(res)
                 if(res.success) {
-                    _this.lists = res.data.song_list
+                    _this.lists = res.data.items
                 }else {
                     wx.showToast({
                         title: '失败',

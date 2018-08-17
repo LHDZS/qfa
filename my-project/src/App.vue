@@ -22,6 +22,9 @@ export default {
                 duration: 1000
             })
           }
+        },
+        fail: (err) => {
+          console.log(err)
         }
     })
   }

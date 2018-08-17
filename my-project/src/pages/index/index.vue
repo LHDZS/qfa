@@ -325,7 +325,7 @@ body {
         <swiper class="home_swiper" @change="swipers"  :current="tabkey">
             <swiper-item style="overflow: auto;">
                 <scroll-view scroll-y="true" style="height: 100%" enable-back-to-top @scrolltolower="upsole()" class="home_content_tab" v-if="loadingStatus && !abnorType">
-                    <div class="home_content_tab_item" v-for="(item,key) in items" :key="key" @click.stop="details(item.id)">
+                    <div class="home_content_tab_item" v-for="(item,key) in items" :key="key" @click.stop="details(item.id,item.openid)">
                         <div class="home_content_tab_main" :style="{ 'background-image': 'url('+ http + item.bgimage +')'}">
                             <!-- <img class="home_content_main_img" :src="item.bgimage" alt=""> -->
                         </div>
@@ -388,7 +388,7 @@ body {
                                 {{attnf[item.g_type].name}}
                             </div>
                         </div>
-                        <div class="home_content_attention_article_botton" @click="details(item.id)">
+                        <div class="home_content_attention_article_botton" @click="details(item.id,item.openid)">
                             <div class="home_article_botton_name">{{item.title}}</div>
                             <!-- <div class="home_article_botton_details">详情</div> -->
                             <div class="home_article_botton_img" :style="{ 'background-image': 'url('+ http + item.bgimage +')'}"></div>
@@ -399,7 +399,7 @@ body {
             <swiper-item style="overflow: auto;">
                 <scroll-view scroll-y="true" style="height: 100%" enable-back-to-top @scrolltolower="upsole()" class="home_content_tab">
                     <div class="home_content_tab_three">
-                        <div class="home_content_three_item" v-for="(item,key) in nearbyarr" :key="key" @click="details(item.id)">
+                        <div class="home_content_three_item" v-for="(item,key) in nearbyarr" :key="key" @click="details(item.id,item.openid)">
                             <div class="home_content_three_item_img" :style="{ 'background-image': 'url('+ http + item.bgimage +')'}"></div>
                             <div class="home_content_three_item_botton">
                                 <div class="home_three_item_botton_img" @click.stop="bieren(item.openid)"><img class="images" :src="item.touxiang" alt=""></div>
@@ -659,8 +659,8 @@ export default {
             wx.navigateTo({ url })
         },
         // 推荐跳详情
-        details(e) {
-            const url = '../indexitem/main?id=' + e
+        details(e,id) {
+            const url = '../indexitem/main?id=' + e + '&opid=' + id
             wx.navigateTo({ url })
         },
         upper(e) {
@@ -859,11 +859,8 @@ export default {
         // 发现接口
         discover () {
             var _this = this
-            this.$get('/restapi/article',{
-
-            })
+            this.$get('/restapi/article',{})
             .then(function (res) {
-                console.log(res)
                 if(res.success) {
                     _this.items = res.data.items
                 }else {
