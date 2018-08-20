@@ -196,7 +196,7 @@
                 <div class="mine_header_content_data">创作{{myself.essay_quantity}}篇文章，发表{{myself.img_quantity}}张照片，被访问{{myself.visits_quantity}}次</div>
                 
                 <div class="mine_header_content_share">
-                    <div class="mine_header_content_share_iteml" @click="dotattention(myself.openid)" :style="{backgroundColor:attnf[myself.g_type].bgc,color:attnf[myself.g_type].color}">{{attnf[myself.g_type].name}}</div>
+                    <div class="mine_header_content_share_iteml" @click="dotattention(myself.openid)" :style="{backgroundColor:attnf[myself.g_type ? myself.g_type : 0].bgc,color:attnf[myself.g_type ? myself.g_type : 0].color}">{{attnf[myself.g_type ? myself.g_type : 0].name}}</div>
                     <button class='mine_header_content_share_itemr' open-type="share">分享</button>
                     <!-- <div class="mine_header_content_share_itemr">分享</div> -->
                 </div>
@@ -221,9 +221,9 @@
             </div>
             <div class="zhanweifu"></div>
         </div>
-        <div class="mine_member" @click="clubcard">
+        <!-- <div class="mine_member" @click="clubcard">
             <img class="mine_member_img" src="/static/img/hyk.png" alt="">
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -367,7 +367,26 @@ export default {
     }
     return {
       title: '分享',
-      path: '/index/main'
+      path: '/otherpeople/main',
+      success: function(res) {
+        var opid = wx.getStorageSync('openid')
+        _this.$post('/restapi/article-integral/create',{
+            openid: opid,
+        })
+        .then(function (res) {
+            wx.showToast({
+                title: res.data.msg,
+                icon: 'success',
+                duration: 2000
+            })
+        })
+        .catch(function (res) {
+            console.log(res)
+        })
+     },
+     fail: function(res) {
+        console.log('转发失败')
+     }
     }
   }
 

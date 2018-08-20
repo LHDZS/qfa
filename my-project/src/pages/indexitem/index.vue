@@ -14,10 +14,11 @@
 export default {
     data() {
         return {
-            // url:'http://www.wenzhang.xiaoniren.cn/word-info/index.html',
-            url: 'http://localhost:8080',
+            url:'http://www.wenzhang.xiaoniren.cn/word-info/index.html',
+            // url: 'http://localhost:8080',
             id: '',
             opid: null
+            
         }
     },
     components: {

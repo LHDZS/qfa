@@ -113,6 +113,7 @@ export default {
     },
     methods:{
         inpu(e) {
+            this.kid = null
             this.item = e.target.value
         },
         // 切换
@@ -127,7 +128,7 @@ export default {
             this.$post('/restapi/article-reward/create',{
                 reward_openid: opid,
                 openid: _this.oppid,
-                reward_amount : 0.01,
+                reward_amount : _this.item,
                 aid: _this.id
             })
             .then(function (res) {

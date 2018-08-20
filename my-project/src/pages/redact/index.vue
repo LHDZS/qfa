@@ -590,6 +590,7 @@ export default {
         },
         // 创作
         allUploads(arr, oldPromise){
+            let opid = wx.getStorageSync('openid')
             let allRequest = []
             if(oldPromise){
                 allRequest.push(oldPromise)
@@ -599,12 +600,13 @@ export default {
                     wx.uploadFile({
                         url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
                         filePath: arr[i].view,
-                        name: 'files',
-                        header: {
-                            "Content-Type": "multipart/form-data",
-                            'accept': 'application/json',
-                        },
+                        name: 'file',
+                        // header: {
+                        //     "Content-Type": "multipart/form-data",
+                        //     'accept': 'application/json',
+                        // },
                         formData: {
+                            openid: opid,
                             files: arr[i].views
                         },
                         success: function (res) {
@@ -630,6 +632,7 @@ export default {
         // 编辑
         allUetids(arr, oldPromise){
             let allRequest = []
+            let opid = wx.getStorageSync('openid')
             if(oldPromise){
                 allRequest.push(oldPromise)
             }
@@ -639,13 +642,13 @@ export default {
                         wx.uploadFile({
                             url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
                             filePath: arr[i].view,
-                            name: 'files',
-                            header: {
-                                "Content-Type": "multipart/form-data",
-                                'accept': 'application/json',
-                            },
+                            name: 'file',
+                            // header: {
+                            //     "Content-Type": "multipart/form-data",
+                            // },
                             formData: {
-                                files: arr[i].views
+                                openid: opid,
+                                // files: arr[i].views
                             },
                             success: function (res) {
                                 var data = JSON.parse(res.data)
@@ -706,13 +709,13 @@ export default {
                         wx.uploadFile({
                             url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
                             filePath: this.bgimg,
-                            name: 'files',
-                            header: {
-                                "Content-Type": "multipart/form-data",
-                                'accept': 'application/json',
-                            },
+                            name: 'file',
+                            // header: {
+                            //     "Content-Type": "multipart/form-data",
+                            // },
                             formData: {
-                                files: this.bgimg
+                                openid: opid,
+                                // files: this.bgimg
                             },
                             success: (res) => {
                                 var data = JSON.parse(res.data)
@@ -787,6 +790,7 @@ export default {
                             'accept': 'application/json',
                         },
                         formData: {
+                            openid: opid,
                             files: this.bgimg
                         },
                         success: (res) => {

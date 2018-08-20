@@ -45,9 +45,22 @@
 .mine_header_content_portrait {
     width: 131rpx;
     height: 130rpx;
-    border-radius: 50%;
-    overflow: hidden;
     margin: 0 auto;
+    position: relative;
+}
+.mine_header_content_portrait_images {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.mine_header_content_pimg {
+    width: 40rpx;
+    height: 40rpx;
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 .mine_header_content_name {
     width: 100%;
@@ -155,6 +168,9 @@
     height: 40rpx;
     line-height: 40rpx;
     font-size: 30rpx;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
 }
 .mine_menu_content_iteml_name {
     width: 100%;
@@ -251,14 +267,17 @@
                         客服
                     </button>
                 <div class="mine_header_content_portrait">
-                    <open-data class="images" type="userAvatarUrl"></open-data>
+                    <div class="mine_header_content_portrait_images">
+                        <open-data class="images" type="userAvatarUrl"></open-data>
+                    </div>
+                    <img v-if="!memberof" class="mine_header_content_pimg" src="/static/img/zuanh.png" alt="">
+                    <img v-if="memberof" class="mine_header_content_pimg" src="/static/img/zuan.png" alt="">
                 </div>
                 <div class="mine_header_content_name">
                     <open-data type="userNickName" open-gid="xxxxxx"></open-data>
                 </div>
                 <div class="mine_header_content_your">关注 {{myself.attention}} | 粉丝 {{myself.fans}}</div>
                 <div class="mine_header_content_data">创作{{myself.essay_quantity}}篇文章，发表{{myself.img_quantity}}张照片，被访问{{myself.visits_quantity}}次</div>
-                <!-- <div class="mine_header_content_share">分享</div> -->
                 <button class='mine_header_content_share' open-type="share" catchtap="true">分享</button>
             </div>
         </div>
@@ -323,9 +342,9 @@
             <div class="zhanweifu"></div>
         </div>
 
-        <div class="mine_member" @click="clubcard">
+        <!-- <div class="mine_member" @click="clubcard">
             <img class="mine_member_img" src="/static/img/hyk.png" alt="">
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -339,7 +358,9 @@ export default {
             myself:{},
             http: '',
             // 自做分页
-            itemkey:10
+            itemkey:10,
+            // 会员
+            memberof:false
         }
     },
     components: {
@@ -349,6 +370,7 @@ export default {
         this.http = this.url
         wx.setStorageSync('pShow','')
         this.artarr = wx.getStorageSync('artarr') || []
+        this.member()
         // this.personage()
     },
     onShow () {
@@ -360,6 +382,33 @@ export default {
         
     },
     methods:{
+        //判断会员
+        member () {
+            var _this = this
+            var opid = wx.getStorageSync('openid')
+            this.$post('/restapi/article-integral-count/selects',{
+                openid: opid,
+            })
+            .then(function (res) {
+                if(res.success) {
+                    console.log(res)
+                    if (res.data.use_suffer >= res.data.suffer) {
+                        _this.memberof = true
+                    }else {
+                        _this.memberof = false
+                    }
+                }else {
+                    wx.showToast({
+                        title: '失败',
+                        icon: 'success',
+                        duration: 1000
+                    })
+                }
+            })
+            .catch(function (res) {
+                console.log(res)
+            })
+        },
         // 会员卡
         clubcard () {
             const url = '../clubcard/main'
@@ -415,7 +464,6 @@ export default {
                 console.log(res)
             })
         },
-
     },
     onReachBottom(){
         console.log('触底事件')
@@ -424,13 +472,46 @@ export default {
         }
     },
     onShareAppMessage (res) {
+        var _this = this
         if (res.from === 'button') {
         // 来自页面内转发按钮
         console.log(res.target)
         }
         return {
-        title: '分享',
-        path: '/index/main'
+            title: '分享',
+            path: '/mine/main',
+            success: function(res) {
+                var opid = wx.getStorageSync('openid')
+                _this.$post('/restapi/article-integral/create',{
+                    // openid: opid,
+                })
+                .then(function (res) {
+                    if (res.success) {
+                        wx.showToast({
+                            title: res.data.msg,
+                            icon: 'success',
+                            duration: 2000
+                        })
+                        _this.myself.integral = res.data.integral
+                    }else {
+                        wx.showToast({
+                            title: res.data.message,
+                            icon: 'none',
+                            duration: 2000
+                        })
+                    }
+                })
+                .catch(function (res) {
+                    console.log('参数失败')
+                })
+            },
+            fail: function(res) {
+                wx.showToast({
+                    title: '分享失败',
+                    icon: 'none',
+                    duration: 2000
+                })
+            }
         }
     }
 

@@ -393,6 +393,36 @@ export default {
             })
         },
     },
+    onShareAppMessage (res) {
+        var _this = this
+        if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+        }
+        return {
+            title: '分享',
+            path: '/Personaldetails/main',
+            success: function(res) {
+                var opid = wx.getStorageSync('openid')
+                _this.$post('/restapi/article-integral/create',{
+                    openid: opid,
+                })
+                .then(function (res) {
+                    wx.showToast({
+                        title: res.data.msg,
+                        icon: 'success',
+                        duration: 2000
+                    })
+                })
+                .catch(function (res) {
+                    console.log(res)
+                })
+            },
+            fail: function(res) {
+                console.log('转发失败')
+            }
+        }
+    },
     onReachBottom(){
 
     },

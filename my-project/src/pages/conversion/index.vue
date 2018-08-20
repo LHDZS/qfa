@@ -105,7 +105,7 @@
         </div>
         <div class="conversion_import">
             <div class="conversion_import_left">输入兑换积分：</div>
-            <input class="conversion_import_right" type="text" placeholder="请输入100~20000之间的整数" maxlength="5" @blur="impor">
+            <input class="conversion_import_right" type="number" placeholder="请输入100~20000之间的整数" maxlength="5" @blur="impor">
         </div>
         <div class="conversion_grid">
             <span v-if="strbol">可兑换{{money}}元</span>
@@ -134,6 +134,8 @@ export default {
         return {
             totalpoints: 0,
             text: 0,
+            // 兑换倍率
+            power: null,
             opid: null,
             strbol: false,
             money: null,
@@ -156,16 +158,15 @@ export default {
     methods:{
         // 输入监听事件
         impor (e) {
-            var str = e.target.value
-            var r = /^\+?[1-9][0-9]*$/
-            if(r.test(str)) {
-                this.text = e.target.value
+            let str = e.target.value
+            if(e.target.value%this.power == 0) {
+                this.text = str
                 this.strbol = true
-                this.money = e.target.value/100
+                this.money = str/this.power
             }else {
                 this.strbol = false
                 wx.showToast({
-                    title: '请输入正确的整数',
+                    title: '请输入'+this.power+'的倍数',
                     icon: 'none',
                     duration: 1000
                 }) 
@@ -210,6 +211,7 @@ export default {
             .then(function (res) {
                 if(res.success) {
                     _this.totalpoints = res.data.items[0].integral_count
+                    _this.power = res.data.items[0].lowest_integral
                 }else {
                     wx.showToast({
                         title: '失败',
