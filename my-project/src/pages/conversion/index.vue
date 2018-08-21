@@ -120,7 +120,7 @@
                 </div>
                 <div class="conversion_popups_item">
                     <img class="conversion_popups_item_img" src="/static/img/jf2.png" alt="">
-                    余额+{{text/100}}元
+                    余额+{{text/power}}元
                 </div>
             </div>
         </div>
@@ -146,6 +146,7 @@ export default {
         
     },
     mounted() {
+        this.money = ''
         this.opid = wx.getStorageSync('openid')
         this.integral()
     },
@@ -186,6 +187,7 @@ export default {
             .then(function (res) {
                 if(res.success) {
                     _this.popupsbol = true
+                    // _this.strbol = false
                     setTimeout(() => {
                         _this.integral()
                         _this.popupsbol = false

@@ -600,11 +600,11 @@ export default {
                     wx.uploadFile({
                         url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
                         filePath: arr[i].view,
-                        name: 'file',
-                        // header: {
-                        //     "Content-Type": "multipart/form-data",
-                        //     'accept': 'application/json',
-                        // },
+                        name: 'files',
+                        header: {
+                            "Content-Type": "multipart/form-data",
+                            'accept': 'application/json;charset=UTF-8',
+                        },
                         formData: {
                             openid: opid,
                             files: arr[i].views
@@ -642,13 +642,13 @@ export default {
                         wx.uploadFile({
                             url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
                             filePath: arr[i].view,
-                            name: 'file',
-                            // header: {
-                            //     "Content-Type": "multipart/form-data",
-                            // },
+                            name: 'files',
+                            header: {
+                                "Content-Type": "multipart/form-data",
+                            },
                             formData: {
                                 openid: opid,
-                                // files: arr[i].views
+                                files: arr[i].views
                             },
                             success: function (res) {
                                 var data = JSON.parse(res.data)
@@ -709,13 +709,13 @@ export default {
                         wx.uploadFile({
                             url: 'http://www.wenzhang.xiaoniren.cn/restapi/article/uploads',
                             filePath: this.bgimg,
-                            name: 'file',
-                            // header: {
-                            //     "Content-Type": "multipart/form-data",
-                            // },
+                            name: 'files',
+                            header: {
+                                "Content-Type": "multipart/form-data",
+                            },
                             formData: {
                                 openid: opid,
-                                // files: this.bgimg
+                                files: this.bgimg
                             },
                             success: (res) => {
                                 var data = JSON.parse(res.data)
@@ -1034,6 +1034,7 @@ export default {
         // 标题编辑跳转
         title () {
             console.log('标题跳转')
+            console.log(this.$router)
             this.$router.push({ path: '/pages/writing/main' })
         },
         // 文章编辑
