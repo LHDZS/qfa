@@ -28,7 +28,7 @@ export default {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#52b0ff',
-      navigationBarTitleText: '圈粉儿',
+      navigationBarTitleText: '大眼看四方',
       navigationBarTextStyle: 'white'
     },
     tabBar: {

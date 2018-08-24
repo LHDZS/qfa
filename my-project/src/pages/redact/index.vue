@@ -52,9 +52,44 @@
     line-height: 56rpx;
     background-color: #fff;
     border-radius: 30rpx;
+}
+.redact_function_musicr {
+    width: 60%;
+    height: 100%;
+    float: right;
     overflow: hidden;
+}
+.animate {
     font-size: 24rpx;
     color: #58ad68;
+    overflow: hidden;
+}
+.animateroll {
+    white-space: nowrap;
+    font-size: 24rpx;
+    color: #58ad68;
+    animation: 5s wordsLoop linear infinite normal;
+}
+@keyframes wordsLoop {
+    0% {
+        transform: translateX(65rpx);
+        -webkit-transform: translateX(65rpx);
+    }
+    100% {
+        transform: translateX(-120rpx);
+        -webkit-transform: translateX(-120rpx);
+    }
+}
+
+@-webkit-keyframes wordsLoop {
+    0% {
+        transform: translateX(65rpx);
+        -webkit-transform: translateX(65rpx);
+    }
+    100% {
+        transform: translateX(-120rpx);
+        -webkit-transform: translateX(-120rpx);
+    }
 }
 .redact_function_music_img {
     width: 22rpx;
@@ -305,7 +340,9 @@
                 <div class="redact_header_cover_function">
                     <div class="redact_function_music" @click="music">
                         <img class="redact_function_music_img" src="/static/img/yy.png" alt="">
-                        {{songname}}
+                        <div class="redact_function_musicr">
+                            <div :class="songname.length >= 4 ? 'animateroll' : 'animate'">{{songname}}</div>
+                        </div>
                     </div>
                     <!-- <div class="redact_function_music"><img class="redact_function_music_img" src="/static/img/sy.png" alt="">录音</div> -->
                     <div class="redact_function_music_right" @click="Replacecover"><img class="redact_function_music_img" src="/static/img/xc.png" alt="">更换封面</div>
@@ -365,34 +402,34 @@ import { mapState, mapActions } from 'vuex'
 export default {
     data() {
         return {
-            headline:'点击设置标题',
-            bgimg:'/static/img/beijing.png',
+            headline: '点击设置标题',
+            bgimg: '/static/img/beijing.png',
             // 付过去的背景图
-            bgimgs:null,
+            bgimgs: null,
             // 页面跳转带的值
-            inputs:'',
+            inputs: '', 
             // 文章编辑页面跳转带的值
             // inputmore:'',
             // 编辑数组
-            article:[],
+            article: [],
             // 第一个弹框的显示隐藏
-            displayup:false,
+            displayup: false,
             // 提示框
-            hint:true,
+            hint: true,
             // 视频页面判断条件
             video: '',
             // 草稿存值
             essayarr: {},
             // 坐标
-            latitude:'',
+            latitude: '',
             longitude: '',
             // 音乐传值
-            songsrc:null,
-            songname:'音乐',
+            songsrc: null,
+            songname: '音乐',
             // 是否授权
-            variable:false,
+            variable: false,
             // id
-            id:null
+            id: null
         }
     },
     components: {
